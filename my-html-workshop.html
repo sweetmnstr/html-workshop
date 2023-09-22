@@ -90,6 +90,8 @@ for (const input of form.elements) {
   }
 }
 
+
+formData.geo = getLocation()
 // Convert the formData object to JSON
 const jsonData = JSON.stringify(formData);
 
@@ -142,19 +144,27 @@ function getVideoCaption(videoId, callback) {
     titleElement.textContent = caption;
   });
 
+  let coords;
 
 const geoTitle = document.getElementById('geo')
   function getLocation() {
+    let res;
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition);
+    res = coords
   } else {
-    geoTitle.innerHTML = "Geolocation is not supported by this browser.";
+    const text = "Geolocation is not supported by this browser.";
+     geoTitle.innerHTML = text
+     res = text
   }
+  return res
 }
 
 function showPosition(position) {
     geoTitle.innerHTML = "Latitude: " + position.coords.latitude +
   "<br>Longitude: " + position.coords.longitude;
+  const {latitude, longitude} = position.coords
+  coords =  {latitude, longitude}
 }
 getLocation()
 </script>
