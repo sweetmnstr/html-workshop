@@ -17,6 +17,145 @@
             }
     </p>
 
-
+    <h1>Get form</h1>
+    <form action="http://localhost:3000/form/" method="get" class="form-example" target="_self" autocomplete="on">
+        <div class="form-example">
+            <label for="studentName">Enter your studentName: </label>
+            <input type="text" name="studentName" id="studentName" required />
+          </div>
+          <div class="form-example">
+            <label for="surname">Enter your surname: </label>
+            <input name="surname" id="surname" required />
+          </div>
+          <div class="form-example">
+            <label for="age">Enter your age: </label>
+            <input  name="age" id="age" required />
+          </div>
+          <div class="form-example">
+            <label for="ID">Enter your ID: </label>
+            <input name="ID" id="ID" required />
+          </div>
+          <div class="form-example">
+            <label for="faculty">Enter your faculty: </label>
+            <input type="text" name="faculty" id="faculty" required />
+          </div>
+          <div class="form-example">
+            <input type="submit" value="Subscribe!" />
+          </div>
+    </form>
+    <h1>Post form</h1>
+    <form action="http://localhost:3000/form" method="post" class="form-example" target="_self" autocomplete="on" id="postForm"> 
+        <div class="form-example">
+            <label for="studentName">Enter your studentName: </label>
+            <input type="text" name="studentName" id="studentName" required />
+          </div>
+          <div class="form-example">
+            <label for="surname">Enter your surname: </label>
+            <input name="surname" id="surname" required />
+          </div>
+          <div class="form-example">
+            <label for="age">Enter your age: </label>
+            <input  name="age" id="age" required />
+          </div>
+          <div class="form-example">
+            <label for="ID">Enter your ID: </label>
+            <input name="ID" id="ID" required />
+          </div>
+          <div class="form-example">
+            <label for="faculty">Enter your faculty: </label>
+            <input type="text" name="faculty" id="faculty" required />
+          </div>
+          <div class="form-example">
+            <button type="button" onclick="submitForm()">Submit</button>
+          </div>
+    </form>
+    <h1 id="videoTitle"></h1>
+    <iframe width="420" height="315"
+src="https://www.youtube.com/embed/tgbNymZ7vqY">
+</iframe>
+<h1 id="geo"></h1>
 </body>
+<script>
+    const YOUTUBE_API_KEY = 'AIzaSyBgT-PuEpiWyiJ2cuj9pCZnByKRtBLWvUo'
+function submitForm() {
+const form = document.getElementById('postForm');
+
+// Create an empty object to store the form data
+const formData = {};
+
+// Loop through form elements with a 'name' attribute and add them to the formData object
+for (const input of form.elements) {
+  if (input.name) {
+    formData[input.name] = input.value;
+  }
+}
+
+// Convert the formData object to JSON
+const jsonData = JSON.stringify(formData);
+
+// Send a POST request to the server with the JSON data
+fetch('http://localhost:3000/form', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: jsonData,
+})
+  .then(response => {
+    if (response.ok) {
+      // Handle a successful response (e.g., show a success message)
+      console.log('Form data sent successfully');
+    } else {
+      // Handle errors (e.g., show an error message)
+      console.error('Failed to send form data');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+
+  });
+}
+function getVideoCaption(videoId, callback) {
+    // Make a request to the YouTube API to get video details
+    fetch(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${YOUTUBE_API_KEY}`)
+      .then(response => response.json())
+      .then(data => {
+        const caption = data.items[0].snippet.title;
+        callback(caption);
+      })
+      .catch(error => {
+        callback('There are some problem with your google api key, please update it!');
+        console.error('Error:', error);
+      });
+  }
+
+  // Get the video ID from the YouTube embed code
+  const embedCode = document.querySelector('iframe').src;
+  const videoId = embedCode.match(/embed\/([a-zA-Z0-9_-]+)/)[1];
+
+  // Set the video caption as the title
+  getVideoCaption(videoId, caption => {
+    const videotitleElement = document.getElementById('videoTitle');
+    const [titleElement] = document.getElementsByTagName('title');
+
+    videotitleElement.textContent = caption;
+    titleElement.textContent = caption;
+  });
+
+
+const geoTitle = document.getElementById('geo')
+  function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    geoTitle.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+function showPosition(position) {
+    geoTitle.innerHTML = "Latitude: " + position.coords.latitude +
+  "<br>Longitude: " + position.coords.longitude;
+}
+getLocation()
+</script>
 </html>
